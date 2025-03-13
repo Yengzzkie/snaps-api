@@ -42,7 +42,7 @@ router
     try {
       fs.readFile("data/photos.json", (err, data) => {
         const photos = JSON.parse(data);
-        const photo = photos.find((photo) => photo.id === req.params.id); // filter the photos array by id
+        const photo = photos.find((photo) => photo.id === req.params.id); // find the photos array by id
         if (!photo) {
           res.status(404).json({ message: "Photo not found" });
           return;
@@ -55,8 +55,30 @@ router
     }
   })
   .post((req, res) => {
-    const id = uuidv4();
-    res.json({ message: "Post request submitted", id: id });
+    try {
+      const requestData = req.body;
+      const id = uuidv4(); // generate new ID
+      const timestamp = new Date().getTime(); // generate new date in milliseconds
+
+      fs.readFile("data/photos.json", (err, data) => {
+        const photos = JSON.parse(data);
+        const photo = photos.find((photo) => photo.id === req.params.id); // find the photo first based on the id params
+        
+        if (!photo) { // if photo doesn't exist return a 404 error just in case user messes with the id params in post request
+          res.status(404).json({ message: "Photo not found" });
+          return;
+        }
+
+        const newComment = { ...requestData, id: id, timestamp: timestamp }; // construct the new comment
+        photo.comments.push(newComment); // push it to the comments array of the specific photo
+
+        fs.writeFile("data/photos.json", JSON.stringify(photos), () => { // update the existing json file with the newly created comment
+          res.status(201).json({ message: "Comment posted successfully" });
+        });
+      });
+    } catch (error) {
+      console.error("Failed to post comment:", error);
+    }
   });
 
 export default router;

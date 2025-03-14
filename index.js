@@ -1,6 +1,5 @@
 import express from "express";
 import cors from 'cors';
-import path from 'path';
 import dotenv from "dotenv";
 import tagsRoute from './routes/tags.js';
 import photosRoute from './routes/photos.js';

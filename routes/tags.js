@@ -3,6 +3,7 @@ import fs from "fs";
 
 const router = express.Router();
 
+// route to get tags
 router.get("/", (req, res) => {
   try {
     fs.readFile("data/tags.json", (err, data) => {

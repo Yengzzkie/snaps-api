@@ -61,13 +61,24 @@ router.route("/:id/comments")
   .post((req, res) => {
     try {
       const requestData = req.body;
-      const id = uuidv4(); // generate new ID
-      const timestamp = new Date().getTime(); // generate new date in milliseconds
+      const { name, comment } = requestData;
+
+      if (!name || !comment) { // return an error if the input fields are empty
+        res.status(400).json({ message: "Bad request, input fields cannot be empty" });
+        return;
+      }
+
+      if (name.length < 3 || comment.length < 3) { // return an error if comment is less than 3 characters
+        res.status(400).json({ message: "Name or comment too short" });
+        return;
+      }
 
       fs.readFile("data/photos.json", (err, data) => {
         const photos = JSON.parse(data);
         const photo = photos.find((photo) => photo.id === req.params.id); // find the photo first based on the id params
-        
+        const id = uuidv4(); // generate new ID
+        const timestamp = new Date().getTime(); // generate new date in milliseconds
+
         if (!photo) { // if photo doesn't exist return a 404 error just in case user messes with the id params in post request
           res.status(404).json({ message: "Photo not found" });
           return;

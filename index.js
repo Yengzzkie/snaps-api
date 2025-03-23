@@ -6,7 +6,7 @@ import photosRoute from './routes/photos.js';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000; // env PORT variable will use 8080
 
 app.use(express.static('public'));
 app.use(express.json());
